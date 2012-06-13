@@ -1,0 +1,17 @@
+{{#view Todos.CreateTodoView id="new-todo" placeholder="What needs to be done?"}}
+	<input type="text" placeholder="What needs to be done?"/>
+{{/view}}
+
+<div id="stats" class="sc-view">
+  <button {{action "onClearCompletedTodosClick"}} class="sc-button">Clear Completed Todos</button>
+
+  {{Todos.todosController.remaining}} remaining
+  
+</div>
+
+<!--<input type="checkbox" class="mark-all-done">Mark All as Done</input>-->
+
+<label>
+	{{view Ember.Checkbox class="mark-all-done" disabledBinding="Todos.todosController.isEmpty" checkedBinding="Todos.todosController.allAreDone"}}
+	Mark All as Done
+</label>
