@@ -1,4 +1,5 @@
-package todos;
+package todos.controller;
+import todos.model.Todo;
 import ember.ArrayController;
 using Lambda;
 using ember.ArrayExtensions;

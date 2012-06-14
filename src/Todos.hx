@@ -1,11 +1,11 @@
 package ;
-import todos.TodoView;
+import todos.view.TodoView;
 import ember.Application;
 import ember.View;
-import todos.TodosController;
-import todos.MainView;
-import todos.CreateTodoView;
-import todos.Todo;
+import todos.controller.TodosController;
+import todos.view.MainView;
+import todos.view.CreateTodoView;
+import todos.model.Todo;
 
 class Todos extends Application {
 	

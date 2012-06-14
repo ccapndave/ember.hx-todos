@@ -1,4 +1,4 @@
-package todos;
+package todos.view;
 import ember.TextField;
 
 class CreateTodoView extends TextField {

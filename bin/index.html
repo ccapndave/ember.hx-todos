@@ -21,24 +21,24 @@
 		<header id="header">
 			<h1>todos</h1>
 			<!--<input id="new-todo" placeholder="What needs to be done?" autofocus>-->
-			{{view Todos.CreateTodoView id="new-todo" placeholder="What needs to be done?"}}
+			{{view Todos.view.CreateTodoView id="new-todo" placeholder="What needs to be done?"}}
 		</header>
 		<!-- This section should be hidden by default and shown when there are todos -->
-		{{#view Todos.MainView}}
+		{{#view Todos.view.MainView}}
 		<section id="main" {{bindAttr class="Todos.todosController.isEmpty:hidden"}}>
 			{{view Ember.Checkbox id="toggle-all" class="toggle"}}
 			<label for="toggle-all">Mark all as complete</label>
 
 			<ul id="todo-list">
 				{{#each Todos.todosController}}
-					{{#view Todos.TodoView todoBinding="this"}}
+					{{#view Todos.view.TodoView todoBinding="this"}}
 					<li {{bindAttr class="todo.isDone:completed editing"}}>
 						<div class="view">
 							{{view Ember.Checkbox checkedBinding="todo.isDone" class="toggle"}}
 							<label>{{todo.title}}</label>
 							<button class="destroy" {{action "onDestroy"}}></button>
 						</div>
-						{{view Todos.TodoTextField class="edit" valueBinding="todo.title" todoBinding="todo"}}
+						{{view Todos.view.TodoTextField class="edit" valueBinding="todo.title" todoBinding="todo"}}
 					</li>
 					{{/view}}
 				{{/each}}

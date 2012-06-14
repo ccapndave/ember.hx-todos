@@ -1,4 +1,5 @@
-package todos;
+package todos.view;
+import todos.model.Todo;
 import ember.ArrayExtensions;
 import ember.TextField;
 import ember.View;

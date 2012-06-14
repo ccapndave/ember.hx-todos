@@ -1,4 +1,4 @@
-package todos;
+package todos.model;
 import ember.Object;
 
 /**
