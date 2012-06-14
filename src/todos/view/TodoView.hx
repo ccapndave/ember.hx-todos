@@ -37,6 +37,9 @@ class TodoTextField extends TextField {
 
 	private function finishEditing() {
 		cast(parentView, TodoView).editing = false;
+
+		if (todo.title == "")
+			Todos.todosController.removeObject(todo);
 	}
 
 }

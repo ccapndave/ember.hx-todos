@@ -1273,7 +1273,7 @@ createTodo: function(title) {
 },
 clearCompletedTodos: function() {
 	Lambda.foreach(Lambda.filter(this.get("content"),function(todo) {
-		return todo.get("isDone");
+		return todo.get("completed");
 	}),(function(_e) {
 		return function(obj) {
 			return _e.removeObject(obj);
@@ -1282,34 +1282,34 @@ clearCompletedTodos: function() {
 },
 remaining: function() {
 	return Lambda.filter(this.get("content"),function(todo) {
-		return !todo.get("isDone");
+		return !todo.get("completed");
 	}).length;
-}.property('@each.isDone'),
+}.property('@each.completed'),
 completed: function() {
 	return Lambda.filter(this.get("content"),function(todo) {
-		return todo.get("isDone");
+		return todo.get("completed");
 	}).length;
-}.property('@each.isDone'),
+}.property('@each.completed'),
 isEmpty: function() {
 	return this.get("content").length == 0;
 }.property('length'),
-allAreDone: function(key,value) {
+allAreCompleted: function(key,value) {
 	return (function($this) {
 		var $r;
 		switch(value) {
 		case null: case undefined:
 			$r = $this.get("content").length > 0 && Lambda.foreach($this.get("content"),function(todo) {
-				return todo.get("isDone");
+				return todo.get("completed");
 			});
 			break;
 		default:
 			$r = Lambda.foreach($this.get("content"),function(todo) {
-				return todo.set("isDone",value);
+				return todo.set("completed",value);
 			});
 		}
 		return $r;
 	}(this));
-}.property('@each.isDone'),
+}.property('@each.completed'),
 });
 ;
 /**********************************************************/;
@@ -1317,7 +1317,7 @@ allAreDone: function(key,value) {
 if(!Todos.model) Todos.model = {};
 Todos.model.Todo = $hxClasses['Todos.model.Todo'] = Ember.Object.extend({
 title: null,
-isDone: null,
+completed: null,
 });
 ;
 /**********************************************************/;
@@ -1374,6 +1374,7 @@ finishEditing: function() {
 		$r = $t;
 		return $r;
 	}(this))).set("editing",false);
+	if(this.get("todo").get("title") == "") Todos.todosController.removeObject(this.get("todo"));
 },
 });
 ;

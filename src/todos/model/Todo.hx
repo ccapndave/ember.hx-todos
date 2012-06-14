@@ -10,6 +10,6 @@ class Todo extends Object {
 	
 	public var title:String;
 	
-	public var isDone:Bool;
+	public var completed:Bool;
 	
 }
