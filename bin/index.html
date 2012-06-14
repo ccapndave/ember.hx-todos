@@ -1,32 +1,83 @@
 <!doctype html>
-<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]--> <!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]--> <!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]--> <!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Ember.hx • TodoMVC</title>
+	<link rel="stylesheet" href="assets/base.css">
+	<!--[if IE]>
+	<script src="assets/ie.js"></script>
+	<![endif]-->
 
-  <title>Ember.hx Todos</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/todos.css">
-	  
-  <!--[if lt IE 9]>
-  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-
-  <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-  <script type="text/javascript" src="js/ember-0.9.8.1.js"></script>
+	<style type="text/css">
+		.hidden {
+			display: none;
+		}
+	</style>
 </head>
 <body>
-  <h1>Todos</h1>
-  <script type="text/x-handlebars">
-    {{view Todos.MainView}}
-  </script>
+<script type="text/x-handlebars">
+	<section id="todoapp">
+		<header id="header">
+			<h1>todos</h1>
+			<!--<input id="new-todo" placeholder="What needs to be done?" autofocus>-->
+			{{view Todos.CreateTodoView id="new-todo" placeholder="What needs to be done?"}}
+		</header>
+		<!-- This section should be hidden by default and shown when there are todos -->
+		{{#view Todos.MainView}}
+		<section id="main" {{bindAttr class="Todos.todosController.isEmpty:hidden"}}>
+			{{view Ember.Checkbox id="toggle-all" class="toggle"}}
+			<label for="toggle-all">Mark all as complete</label>
 
-  <script type="text/javascript" src="js/todos.js"></script>
+			<ul id="todo-list">
+				{{#each Todos.todosController}}
+					{{#view Todos.TodoView todoBinding="this"}}
+					<li {{bindAttr class="todo.isDone:completed editing"}}>
+						<div class="view">
+							{{view Ember.Checkbox checkedBinding="todo.isDone" class="toggle"}}
+							<label>{{todo.title}}</label>
+							<button class="destroy" {{action "onDestroy"}}></button>
+						</div>
+						{{view Todos.TodoTextField class="edit" valueBinding="todo.title" todoBinding="todo"}}
+					</li>
+					{{/view}}
+				{{/each}}
+			</ul>
+		</section>
+		<!-- This footer should hidden by default and shown when there are todos -->
+		<footer id="footer" {{bindAttr class="Todos.todosController.isEmpty:hidden"}}>
+			<!-- This should be `0 items left` by default -->
+			<span id="todo-count"><strong>{{Todos.todosController.remaining}}</strong> {{pluralizeItems}} left</span>
+			<!-- Remove this if you don't implement routing -->
+			<!--<ul id="filters">
+				<li>
+					<a class="selected" href="#/">All</a>
+				</li>
+				<li>
+					<a href="#/active">Active</a>
+				</li>
+				<li>
+					<a href="#/completed">Completed</a>
+				</li>
+			</ul>-->
+			<button id="clear-completed" {{action "onClearCompletedTodos"}}>Clear completed ({{Todos.todosController.completed}})</button>
+		</footer>
+		{{/view}}
+	</section>
+	<footer id="info">
+		<p>Double-click to edit a todo</p>
+
+		<p>Template by <a href="http://github.com/sindresorhus">Sindre Sorhus</a></p>
+		<!-- Change this out with your name and url ↓ -->
+		<p>Created by <a href="http://www.actionscriptdeveloper.co.uk">Dave Keen</a></p>
+
+		<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+	</footer>
+</script>
+<!-- Scripts here. Don't remove this ↓ -->
+<!--script src="assets/base.js"></script>-->
+<script type="text/javascript" src="assets/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="assets/ember-0.9.8.1.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

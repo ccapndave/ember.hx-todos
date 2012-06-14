@@ -15,7 +15,7 @@ class TodosController extends ArrayController<Todo> {
 		var todo = new Todo();
 		todo.title = title;
 
-		content.pushObject(todo);
+		pushObject(todo);
 	}
 
 	public function clearCompletedTodos() {
@@ -25,6 +25,11 @@ class TodosController extends ArrayController<Todo> {
 	@:property("@each.isDone")
 	public function remaining():Int {
 		return content.filter(function(todo) { return !todo.isDone; }).length;
+	}
+
+	@:property("@each.isDone")
+	public function completed():Int {
+		return content.filter(function(todo) { return todo.isDone; }).length;
 	}
 
 	@:property("length")

@@ -1,8 +1,9 @@
--js bin/js/todos.js
+-js bin/js/app.js
 -main Todos
 #-debug
 -cp src
 -cp D:/Projects/HAXERESOURCES/ember.hx
 -cp D:/Projects/HAXERESOURCES/tinkerbell/src
+-cp D:/Projects/HAXERESOURCES/jQueryExtern
 --macro macros.EmberJSGenerator.use()
 -resource templates/main_view.hbs@main_view

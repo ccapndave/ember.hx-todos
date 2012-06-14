@@ -2,14 +2,13 @@ package todos;
 import ember.View;
 
 class MainView extends View {
-	
-	override public function init():Void {
-		template = ember.Handlebars.compile(haxe.Resource.getString('main_view'));
-		
-		super.init();
+
+	@:property("Todos.todosController.remaining")
+	public function pluralizeItems() {
+		return Todos.todosController.get("remaining") <= 1 ? "item" : "items";
 	}
-	
-	public function onClearCompletedTodosClick() {
+
+	public function onClearCompletedTodos() {
 		Todos.todosController.clearCompletedTodos();
 	}
 	
