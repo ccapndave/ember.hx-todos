@@ -1,7 +1,6 @@
 -js bin/js/todos.js
 -main Todos
 #-debug
-#--macro cloudshift.core.JSGenerator.use()
 -cp src
 -cp D:/Projects/HAXERESOURCES/ember.hx
 -cp D:/Projects/HAXERESOURCES/tinkerbell/src
