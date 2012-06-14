@@ -1,46 +1,42 @@
 package todos;
 import ember.ArrayController;
 using Lambda;
-
-/**
- * ...
- * @author 
- */
+using ember.ArrayExtensions;
 
 class TodosController extends ArrayController<Todo> {
-	
-	override public function init() {
-		content = [];
-		
-		super.init();
-	}
-	
-	public function createTodo(title:String) {
-		var todo = new Todo();
-		todo.title = title;
-		
-		content.push(todo);
-	}
 
-	public function clearCompletedTodos() {
-		content.filter(function(todo) { return todo.isDone; } ).foreach(content.remove);
-	}
-	
-	@:property("@each.isDone")
-	public function remaining():Int {
-		return content.filter(function(todo) { return todo.isDone; } ).length;
-	}
-	
-	@:property("length")
-	public function isEmpty():Bool {
-		return content.length == 0;
-	}
-	
-	@:property("@each.isDone")
-	public function allAreDone():Bool {
-		return false;
-	}
-	
+    override public function init() {
+        content = [];
+
+        super.init();
+    }
+
+    public function createTodo(title:String) {
+        var todo = new Todo();
+        todo.title = title;
+
+        content.pushObject(todo);
+    }
+
+    public function clearCompletedTodos() {
+        content.filter(function(todo) { return todo.isDone; } ).foreach(content.removeObject);
+    }
+
+    @:property("@each.isDone")
+    public function remaining():Int {
+        return content.filter(function(todo) { return todo.isDone; } ).length;
+    }
+
+    @:property("length")
+    public function isEmpty():Bool {
+        return content.length == 0;
+    }
+
+    @:property("@each.isDone")
+    public function allAreDone(?key:String, ?value:Bool):Bool {
+        return false;
+    }
+
 }
 
 /*

@@ -10,7 +10,7 @@ class MainView extends View {
 	}
 	
 	public function onClearCompletedTodosClick() {
-		trace("poop");
+		Todos.todosController.clearCompletedTodos();
 	}
 	
 }

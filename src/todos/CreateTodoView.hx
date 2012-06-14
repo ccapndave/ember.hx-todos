@@ -1,6 +1,13 @@
 package todos;
-import ember.View;
+import ember.TextField;
 
-class CreateTodoView extends View {
-	
+class CreateTodoView extends TextField {
+
+    override public function insertNewline() {
+        if (value != "") {
+            Todos.todosController.createTodo(value);
+            value = "";
+        }
+    }
+
 }
