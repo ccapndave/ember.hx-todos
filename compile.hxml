@@ -4,4 +4,5 @@
 -cp src
 -cp D:/Projects/HAXERESOURCES/ember.hx
 -cp D:/Projects/HAXERESOURCES/tinkerbell/src
+-cp D:/Projects/HAXERESOURCES/hx.html5
 --macro macros.EmberJSGenerator.use()

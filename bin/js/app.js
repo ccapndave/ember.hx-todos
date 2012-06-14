@@ -1,4 +1,54 @@
 var $_, $hxClasses = $hxClasses || {}, $estr = function() { return js.Boot.__string_rec(this,''); };
+EReg = $hxClasses['EReg'] = function(r,opt) {
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
+};
+EReg.__name__ = ["EReg"];
+EReg.prototype.r = null;
+EReg.prototype.match = function(s) {
+	this.r.m = this.r.exec(s);
+	this.r.s = s;
+	return this.r.m != null;
+};
+EReg.prototype.matched = function(n) {
+	return this.r.m != null && n >= 0 && n < this.r.m.length?this.r.m[n]:(function($this) {
+		var $r;
+		throw "EReg::matched";
+		return $r;
+	}(this));
+};
+EReg.prototype.matchedLeft = function() {
+	if(this.r.m == null) throw "No string matched";
+	return this.r.s.substr(0,this.r.m.index);
+};
+EReg.prototype.matchedRight = function() {
+	if(this.r.m == null) throw "No string matched";
+	var sz = this.r.m.index + this.r.m[0].length;
+	return this.r.s.substr(sz,this.r.s.length - sz);
+};
+EReg.prototype.matchedPos = function() {
+	if(this.r.m == null) throw "No string matched";
+	return { pos : this.r.m.index, len : this.r.m[0].length};
+};
+EReg.prototype.split = function(s) {
+	var d = "#__delim__#";
+	return s.replace(this.r,d).split(d);
+};
+EReg.prototype.replace = function(s,by) {
+	return s.replace(this.r,by);
+};
+EReg.prototype.customReplace = function(s,f) {
+	var buf = new StringBuf();
+	while(true) {
+		if(!this.match(s)) break;
+		buf.add(this.matchedLeft());
+		buf.add(f(this));
+		s = this.matchedRight();
+	}
+	buf.b[buf.b.length] = s == null?"null":s;
+	return buf.b.join("");
+};
+EReg.prototype.__class__ = EReg;
 Hash = $hxClasses['Hash'] = function() {
 	this.h = { };
 };
@@ -431,6 +481,93 @@ StringBuf.prototype.toString = function() {
 };
 StringBuf.prototype.b = null;
 StringBuf.prototype.__class__ = StringBuf;
+StringTools = $hxClasses['StringTools'] = function() { };
+StringTools.__name__ = ["StringTools"];
+StringTools.urlEncode = function(s) {
+	return encodeURIComponent(s);
+};
+StringTools.urlDecode = function(s) {
+	return decodeURIComponent(s.split("+").join(" "));
+};
+StringTools.htmlEscape = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+StringTools.htmlUnescape = function(s) {
+	return s.split("&gt;").join(">").split("&lt;").join("<").split("&amp;").join("&");
+};
+StringTools.startsWith = function(s,start) {
+	return s.length >= start.length && s.substr(0,start.length) == start;
+};
+StringTools.endsWith = function(s,end) {
+	var elen = end.length;
+	var slen = s.length;
+	return slen >= elen && s.substr(slen - elen,elen) == end;
+};
+StringTools.isSpace = function(s,pos) {
+	var c = s.charCodeAt(pos);
+	return c >= 9 && c <= 13 || c == 32;
+};
+StringTools.ltrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,r)) r++;
+	if(r > 0) return s.substr(r,l - r); else return s;
+};
+StringTools.rtrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,l - r - 1)) r++;
+	if(r > 0) return s.substr(0,l - r); else return s;
+};
+StringTools.trim = function(s) {
+	return StringTools.ltrim(StringTools.rtrim(s));
+};
+StringTools.rpad = function(s,c,l) {
+	var sl = s.length;
+	var cl = c.length;
+	while(sl < l) if(l - sl < cl) {
+		s += c.substr(0,l - sl);
+		sl = l;
+	} else {
+		s += c;
+		sl += cl;
+	}
+	return s;
+};
+StringTools.lpad = function(s,c,l) {
+	var ns = "";
+	var sl = s.length;
+	if(sl >= l) return s;
+	var cl = c.length;
+	while(sl < l) if(l - sl < cl) {
+		ns += c.substr(0,l - sl);
+		sl = l;
+	} else {
+		ns += c;
+		sl += cl;
+	}
+	return ns + s;
+};
+StringTools.replace = function(s,sub,by) {
+	return s.split(sub).join(by);
+};
+StringTools.hex = function(n,digits) {
+	var s = "";
+	var hexChars = "0123456789ABCDEF";
+	do {
+		s = hexChars.charAt(n & 15) + s;
+		n >>>= 4;
+	} while(n > 0);
+	if(digits != null) while(s.length < digits) s = "0" + s;
+	return s;
+};
+StringTools.fastCodeAt = function(s,index) {
+	return s.cca(index);
+};
+StringTools.isEOF = function(c) {
+	return c != c;
+};
+StringTools.prototype.__class__ = StringTools;
 /**********************************************************/;
 Todos = $hxClasses['Todos'] = Ember.Application.create()
 ;
@@ -635,6 +772,284 @@ ember.ArrayExtensions.removeObject = function(array,obj) {
 };
 ember.ArrayExtensions.prototype.__class__ = ember.ArrayExtensions;
 if(typeof haxe=='undefined') haxe = {};
+haxe.Json = $hxClasses['haxe.Json'] = function() {
+};
+haxe.Json.__name__ = ["haxe","Json"];
+haxe.Json.parse = function(text) {
+	return new haxe.Json().doParse(text);
+};
+haxe.Json.stringify = function(value) {
+	return new haxe.Json().toString(value);
+};
+haxe.Json.prototype.buf = null;
+haxe.Json.prototype.str = null;
+haxe.Json.prototype.pos = null;
+haxe.Json.prototype.reg_float = null;
+haxe.Json.prototype.toString = function(v) {
+	this.buf = new StringBuf();
+	this.toStringRec(v);
+	return this.buf.b.join("");
+};
+haxe.Json.prototype.objString = function(v) {
+	var first = true;
+	this.buf.add("{");
+	var _g = 0, _g1 = Reflect.fields(v);
+	while(_g < _g1.length) {
+		var f = _g1[_g];
+		++_g;
+		var value = Reflect.field(v,f);
+		if(Reflect.isFunction(value)) continue;
+		if(first) first = false; else this.buf.add(",");
+		this.quote(f);
+		this.buf.add(":");
+		this.toStringRec(value);
+	}
+	this.buf.add("}");
+};
+haxe.Json.prototype.toStringRec = function(v) {
+	var $e = (Type["typeof"](v));
+	switch( $e[1] ) {
+	case 8:
+		this.buf.add("\"???\"");
+		break;
+	case 4:
+		this.objString(v);
+		break;
+	case 1:
+	case 2:
+		this.buf.add(v);
+		break;
+	case 5:
+		this.buf.add("\"<fun>\"");
+		break;
+	case 6:
+		var c = $e[2];
+		if(c == String) this.quote(v); else if(c == Array) {
+			var v1 = v;
+			this.buf.add("[");
+			var len = v1.length;
+			if(len > 0) {
+				this.toStringRec(v1[0]);
+				var i = 1;
+				while(i < len) {
+					this.buf.add(",");
+					this.toStringRec(v1[i++]);
+				}
+			}
+			this.buf.add("]");
+		} else if(c == Hash) {
+			var v1 = v;
+			var o = { };
+			var $it0 = v1.keys();
+			while( $it0.hasNext() ) {
+				var k = $it0.next();
+				o[k] = v1.get(k);
+			}
+			this.objString(o);
+		} else if(v.iterator != null) {
+			var a = [];
+			var it = v.iterator();
+			while( it.hasNext() ) {
+				var v1 = it.next();
+				a.push(v1);
+			}
+			this.toStringRec(a);
+		} else this.objString(v);
+		break;
+	case 7:
+		var e = $e[2];
+		this.buf.add(v[1]);
+		break;
+	case 3:
+		this.buf.add(v?"true":"false");
+		break;
+	case 0:
+		this.buf.add("null");
+		break;
+	}
+};
+haxe.Json.prototype.quote = function(s) {
+	this.buf.add("\"");
+	var i = 0;
+	while(true) {
+		var c = s.cca(i++);
+		if(c != c) break;
+		switch(c) {
+		case 34:
+			this.buf.add("\\\"");
+			break;
+		case 92:
+			this.buf.add("\\\\");
+			break;
+		case 10:
+			this.buf.add("\\n");
+			break;
+		case 13:
+			this.buf.add("\\r");
+			break;
+		case 9:
+			this.buf.add("\\t");
+			break;
+		case 8:
+			this.buf.add("\\b");
+			break;
+		case 12:
+			this.buf.add("\\f");
+			break;
+		default:
+			this.buf.addChar(c);
+		}
+	}
+	this.buf.add("\"");
+};
+haxe.Json.prototype.doParse = function(str) {
+	this.reg_float = new EReg("^-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][+-]?[0-9]+)?","");
+	this.str = str;
+	this.pos = 0;
+	return this.parseRec();
+};
+haxe.Json.prototype.invalidChar = function() {
+	this.pos--;
+	throw "Invalid char " + this.str.cca(this.pos) + " at position " + this.pos;
+};
+haxe.Json.prototype.nextChar = function() {
+	return this.str.cca(this.pos++);
+};
+haxe.Json.prototype.parseRec = function() {
+	while(true) {
+		var c = this.str.cca(this.pos++);
+		switch(c) {
+		case 32:case 13:case 10:case 9:
+			break;
+		case 123:
+			var obj = { }, field = null, comma = null;
+			while(true) {
+				var c1 = this.str.cca(this.pos++);
+				switch(c1) {
+				case 32:case 13:case 10:case 9:
+					break;
+				case 125:
+					if(field != null || comma == false) this.invalidChar();
+					return obj;
+				case 58:
+					if(field == null) this.invalidChar();
+					obj[field] = this.parseRec();
+					field = null;
+					comma = true;
+					break;
+				case 44:
+					if(comma) comma = false; else this.invalidChar();
+					break;
+				case 34:
+					if(comma) this.invalidChar();
+					field = this.parseString();
+					break;
+				default:
+					this.invalidChar();
+				}
+			}
+			break;
+		case 91:
+			var arr = [], comma = null;
+			while(true) {
+				var c1 = this.str.cca(this.pos++);
+				switch(c1) {
+				case 32:case 13:case 10:case 9:
+					break;
+				case 93:
+					if(comma == false) this.invalidChar();
+					return arr;
+				case 44:
+					if(comma) comma = false; else this.invalidChar();
+					break;
+				default:
+					if(comma) this.invalidChar();
+					this.pos--;
+					arr.push(this.parseRec());
+					comma = true;
+				}
+			}
+			break;
+		case 116:
+			var save = this.pos;
+			if(this.str.cca(this.pos++) != 114 || this.str.cca(this.pos++) != 117 || this.str.cca(this.pos++) != 101) {
+				this.pos = save;
+				this.invalidChar();
+			}
+			return true;
+		case 102:
+			var save = this.pos;
+			if(this.str.cca(this.pos++) != 97 || this.str.cca(this.pos++) != 108 || this.str.cca(this.pos++) != 115 || this.str.cca(this.pos++) != 101) {
+				this.pos = save;
+				this.invalidChar();
+			}
+			return false;
+		case 110:
+			var save = this.pos;
+			if(this.str.cca(this.pos++) != 117 || this.str.cca(this.pos++) != 108 || this.str.cca(this.pos++) != 108) {
+				this.pos = save;
+				this.invalidChar();
+			}
+			return null;
+		case 34:
+			return this.parseString();
+		case 48:case 49:case 50:case 51:case 52:case 53:case 54:case 55:case 56:case 57:case 45:
+			this.pos--;
+			if(!this.reg_float.match(this.str.substr(this.pos))) throw "Invalid float at position " + this.pos;
+			var v = this.reg_float.matched(0);
+			this.pos += v.length;
+			var f = Std.parseFloat(v);
+			var i = f | 0;
+			return i == f?i:f;
+		default:
+			this.invalidChar();
+		}
+	}
+	return null;
+};
+haxe.Json.prototype.parseString = function() {
+	var start = this.pos;
+	var buf = new StringBuf();
+	while(true) {
+		var c = this.str.cca(this.pos++);
+		if(c == 34) break;
+		if(c == 92) {
+			buf.b[buf.b.length] = this.str.substr(start,this.pos - start - 1);
+			c = this.str.cca(this.pos++);
+			switch(c) {
+			case 114:
+				buf.b[buf.b.length] = String.fromCharCode(13);
+				break;
+			case 110:
+				buf.b[buf.b.length] = String.fromCharCode(10);
+				break;
+			case 116:
+				buf.b[buf.b.length] = String.fromCharCode(9);
+				break;
+			case 98:
+				buf.b[buf.b.length] = String.fromCharCode(8);
+				break;
+			case 102:
+				buf.b[buf.b.length] = String.fromCharCode(12);
+				break;
+			case 47:case 92:case 34:
+				buf.b[buf.b.length] = String.fromCharCode(c);
+				break;
+			case 117:
+				var uc = Std.parseInt("0x" + this.str.substr(this.pos,4));
+				this.pos += 4;
+				buf.b[buf.b.length] = String.fromCharCode(uc);
+				break;
+			default:
+				throw "Invalid escape sequence \\" + String.fromCharCode(c) + " at position " + (this.pos - 1);
+			}
+			start = this.pos;
+		} else if(c != c) throw "Unclosed string";
+	}
+	buf.b[buf.b.length] = this.str.substr(start,this.pos - start - 1);
+	return buf.b.join("");
+};
+haxe.Json.prototype.__class__ = haxe.Json;
 if(!haxe.macro) haxe.macro = {};
 haxe.macro.Context = $hxClasses['haxe.macro.Context'] = function() { };
 haxe.macro.Context.__name__ = ["haxe","macro","Context"];
@@ -1262,10 +1677,30 @@ tink.macro.tools.MacroTools.prototype.__class__ = tink.macro.tools.MacroTools;
 if(typeof Todos=='undefined') Todos = {};
 if(!Todos.controller) Todos.controller = {};
 Todos.controller.TodosController = $hxClasses['Todos.controller.TodosController'] = Ember.ArrayController.extend({
+isLoading: null,
 init: function() {
+	this.isLoading = true;
 	this.set("content",[]);
+	if(localStorage.getItem(Todos.controller.TodosController.LOCAL_STORAGE_KEY)) {
+		var _g = 0, _g1 = (function($this) {
+			var $r;
+			var $t = haxe.Json.parse(localStorage.getItem(Todos.controller.TodosController.LOCAL_STORAGE_KEY));
+			if(Std["is"]($t,Array)) $t; else throw "Class cast error";
+			$r = $t;
+			return $r;
+		}(this));
+		while(_g < _g1.length) {
+			var obj = _g1[_g];
+			++_g;
+			this.pushObject(Todos.model.Todo.fromJson(obj));
+		}
+	}
+	this.isLoading = false;
 	Ember.ArrayController.prototype.init.call(this);
 },
+saveTodos: function() {
+	if(!this.isLoading && this.get("content") != null) localStorage.setItem(Todos.controller.TodosController.LOCAL_STORAGE_KEY,JSON.stringify(this.get("content")));
+}.observes('@each'),
 createTodo: function(title) {
 	var todo = new Todos.model.Todo();
 	todo.set("title",title);
@@ -1274,11 +1709,7 @@ createTodo: function(title) {
 clearCompletedTodos: function() {
 	Lambda.foreach(Lambda.filter(this.get("content"),function(todo) {
 		return todo.get("completed");
-	}),(function(_e) {
-		return function(obj) {
-			return _e.removeObject(obj);
-		};
-	})(this.get("content")));
+	}),this.removeObject.$bind(this));
 },
 remaining: function() {
 	return Lambda.filter(this.get("content"),function(todo) {
@@ -1319,6 +1750,12 @@ Todos.model.Todo = $hxClasses['Todos.model.Todo'] = Ember.Object.extend({
 title: null,
 completed: null,
 });
+Todos.model.Todo.fromJson = function(obj) {
+	var todo = new Todos.model.Todo();
+	todo.set("title",obj.title);
+	todo.set("completed",obj.completed);
+	return todo;
+};
 ;
 /**********************************************************/;
 /**********************************************************/;
@@ -1410,6 +1847,7 @@ js.Boot.__init();
 	var Enum = { };
 	var Void = $hxClasses["Void"] = { __ename__ : ["Void"]};
 };
+if(typeof(JSON) != "undefined") haxe.Json = JSON;
 {
 	if(typeof document != "undefined") js.Lib.document = document;
 	if(typeof window != "undefined") {
@@ -1424,6 +1862,8 @@ js.Boot.__init();
 js.Lib.onerror = null;
 ;
 tink.macro.tools.MacroTools.idCounter = 0;
+;
+Todos.controller.TodosController.LOCAL_STORAGE_KEY = "todos-mvc";
 ;
 Todos.view.TodoTextField.ENTER = 13;
 ;

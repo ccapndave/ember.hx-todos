@@ -46,18 +46,6 @@
 
 		<footer id="footer" {{bindAttr class="Todos.todosController.isEmpty:hidden"}}>
 			<span id="todo-count"><strong>{{Todos.todosController.remaining}}</strong> {{pluralizeItems}} left</span>
-			<!-- Remove this if you don't implement routing -->
-			<!--<ul id="filters">
-				<li>
-					<a class="selected" href="#/">All</a>
-				</li>
-				<li>
-					<a href="#/active">Active</a>
-				</li>
-				<li>
-					<a href="#/completed">Completed</a>
-				</li>
-			</ul>-->
 			<button id="clear-completed" {{action "onClearCompletedTodos"}}>Clear completed ({{Todos.todosController.completed}})</button>
 		</footer>
 		{{/view}}

@@ -1,15 +1,31 @@
 package todos.controller;
 import todos.model.Todo;
 import ember.ArrayController;
+import haxe.Json;
 using Lambda;
-using ember.ArrayExtensions;
 
 class TodosController extends ArrayController<Todo> {
 
+	private static var LOCAL_STORAGE_KEY = "todos-mvc";
+
+	private var isLoading:Bool;
+
 	override public function init() {
+		isLoading = true;
+
 		content = [];
 
+		if (LocalStorage.getItem(LOCAL_STORAGE_KEY))
+			for (obj in cast(Json.parse(LocalStorage.getItem(LOCAL_STORAGE_KEY)), Array<Dynamic>))
+				pushObject(Todo.fromJson(obj));
+
+		isLoading = false;
 		super.init();
+	}
+
+	@:observes("@each")
+	public function saveTodos() {
+		if (!isLoading && content != null) LocalStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(content));
 	}
 
 	public function createTodo(title:String) {
@@ -20,7 +36,7 @@ class TodosController extends ArrayController<Todo> {
 	}
 
 	public function clearCompletedTodos() {
-		content.filter(function(todo) { return todo.completed; }).foreach(content.removeObject);
+		content.filter(function(todo) { return todo.completed; }).foreach(removeObject);
 	}
 
 	@:property("@each.completed")
