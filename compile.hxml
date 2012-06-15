@@ -1,6 +1,14 @@
 -js bin/js/app.js
 -main Todos
-#-debug
+#-debug (http://code.google.com/p/haxe/issues/detail?id=930)
 -cp src
--lib ember.hx
+
+# If using ember.hx from cloned repositories point these at the relevant paths
+-lib tink_core
+-lib tink_macros
+-cp D:/Projects/HAXERESOURCES/ember.hx
+
+# If using ember.hx from haxelib comment out the above and simply use the line below
+# -lib ember.hx
+
 --macro macros.EmberJSGenerator.use()
