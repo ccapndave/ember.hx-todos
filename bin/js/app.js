@@ -573,7 +573,6 @@ Todos = $hxClasses['Todos'] = Ember.Application.create()
 ;
 Todos.todosController = null;
 Todos.main = function() {
-	var embed = [Todos.view.MainView,Todos.view.CreateTodoView,Todos.view.TodoView];
 	Todos.todosController = new Todos.controller.TodosController();
 };
 ;

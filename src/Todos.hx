@@ -12,8 +12,6 @@ class Todos extends Application {
 	public static var todosController:TodosController;
 	
 	public static function main() {
-		var embed = [ MainView, CreateTodoView, TodoView ];
-
 		todosController = new TodosController();
 	}
 	
