@@ -568,7 +568,7 @@ StringTools.isEOF = function(c) {
 	return c != c;
 };
 StringTools.prototype.__class__ = StringTools;
-/**********************************************************/;
+;
 Todos = $hxClasses['Todos'] = Ember.Application.create()
 ;
 Todos.todosController = null;
@@ -576,7 +576,6 @@ Todos.main = function() {
 	Todos.todosController = new Todos.controller.TodosController();
 };
 ;
-/**********************************************************/;
 ValueType = $hxClasses['ValueType'] = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] };
 ValueType.TInt = ["TInt",1];
 ValueType.TInt.toString = $estr;
@@ -1244,7 +1243,7 @@ js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 };
 js.Lib.prototype.__class__ = js.Lib;
-/**********************************************************/;
+;
 if(typeof Todos=='undefined') Todos = {};
 if(!Todos.controller) Todos.controller = {};
 Todos.controller.TodosController = $hxClasses['Todos.controller.TodosController'] = Ember.ArrayController.extend({
@@ -1271,7 +1270,7 @@ init: function() {
 },
 saveTodos: function() {
 	if(!this.isLoading && this.get("content") != null) localStorage.setItem(Todos.controller.TodosController.LOCAL_STORAGE_KEY,JSON.stringify(this.get("content")));
-}.observes('@each'),
+}.observes('@each','@each.title','@each.completed'),
 createTodo: function(title) {
 	var todo = new Todos.model.Todo();
 	todo.set("title",title);
@@ -1314,8 +1313,7 @@ allAreCompleted: function(key,value) {
 }.property('@each.completed'),
 });
 ;
-/**********************************************************/;
-/**********************************************************/;
+;
 if(!Todos.model) Todos.model = {};
 Todos.model.Todo = $hxClasses['Todos.model.Todo'] = Ember.Object.extend({
 title: null,
@@ -1328,8 +1326,7 @@ Todos.model.Todo.fromJson = function(obj) {
 	return todo;
 };
 ;
-/**********************************************************/;
-/**********************************************************/;
+;
 if(!Todos.view) Todos.view = {};
 Todos.view.CreateTodoView = $hxClasses['Todos.view.CreateTodoView'] = Ember.TextField.extend({
 insertNewline: function() {
@@ -1340,8 +1337,7 @@ insertNewline: function() {
 },
 });
 ;
-/**********************************************************/;
-/**********************************************************/;
+;
 Todos.view.MainView = $hxClasses['Todos.view.MainView'] = Ember.View.extend({
 pluralizeItems: function() {
 	return Todos.todosController.get("remaining") <= 1?"item":"items";
@@ -1351,8 +1347,7 @@ onClearCompletedTodos: function() {
 },
 });
 ;
-/**********************************************************/;
-/**********************************************************/;
+;
 Todos.view.TodoView = $hxClasses['Todos.view.TodoView'] = Ember.View.extend({
 todo: null,
 editing: null,
@@ -1364,8 +1359,7 @@ onDestroy: function(event) {
 },
 });
 ;
-/**********************************************************/;
-/**********************************************************/;
+;
 Todos.view.TodoTextField = $hxClasses['Todos.view.TodoTextField'] = Ember.TextField.extend({
 todo: null,
 focusOut: function(event) {
@@ -1386,7 +1380,6 @@ finishEditing: function() {
 },
 });
 ;
-/**********************************************************/;
 $_ = {};
 js.Boot.__res = {};
 js.Boot.__init();

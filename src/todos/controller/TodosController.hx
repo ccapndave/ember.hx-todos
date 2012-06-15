@@ -23,7 +23,7 @@ class TodosController extends ArrayController<Todo> {
 		super.init();
 	}
 
-	@:observes("@each")
+	@:observes("@each", "@each.title", "@each.completed")
 	public function saveTodos() {
 		if (!isLoading && content != null) untyped localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(content));
 	}
