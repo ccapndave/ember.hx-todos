@@ -15,8 +15,8 @@ class TodosController extends ArrayController<Todo> {
 
 		content = [];
 
-		if (LocalStorage.getItem(LOCAL_STORAGE_KEY))
-			for (obj in cast(Json.parse(LocalStorage.getItem(LOCAL_STORAGE_KEY)), Array<Dynamic>))
+		if (untyped localStorage.getItem(LOCAL_STORAGE_KEY))
+			for (obj in cast(Json.parse(untyped localStorage.getItem(LOCAL_STORAGE_KEY)), Array<Dynamic>))
 				pushObject(Todo.fromJson(obj));
 
 		isLoading = false;
@@ -25,7 +25,7 @@ class TodosController extends ArrayController<Todo> {
 
 	@:observes("@each")
 	public function saveTodos() {
-		if (!isLoading && content != null) LocalStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(content));
+		if (!isLoading && content != null) untyped localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(content));
 	}
 
 	public function createTodo(title:String) {

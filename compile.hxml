@@ -2,7 +2,5 @@
 -main Todos
 #-debug
 -cp src
--cp D:/Projects/HAXERESOURCES/ember.hx
--cp D:/Projects/HAXERESOURCES/tinkerbell/src
--cp D:/Projects/HAXERESOURCES/hx.html5
+-lib ember.hx
 --macro macros.EmberJSGenerator.use()
